@@ -83,6 +83,7 @@ gulp.task('stylesheets', function () {
     .src('app/stylesheets/app.scss')
     .pipe($.sass({
       outputStyle: isProduction() ? 'compressed' : 'nested',
+      sourceComments: !isProduction(),
       includePaths: [
         'bower_components/font-awesome/scss',
         'bower_components/foundation/scss'
