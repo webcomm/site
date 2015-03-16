@@ -11,7 +11,7 @@
   </head>
   <body>
     <header role="banner">
-      <a href="#">
+      <a href="#" class="logo">
         <?=file_get_contents(__DIR__.'/images/logo.svg')?>
       </a>
     </header>

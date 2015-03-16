@@ -1,2 +1,33 @@
+// Settings for Foundation and third party
+
+// Here we import the bare-minimum of Foundation that's reuqired to make the
+// website work. Foundation's beauty is in it's simplicity; an opt-in
+// approach that can't be said for several other CSS frameworks.
+@import "foundation/components/buttons";
 @import "foundation/components/type";
 @import "foundation/components/visibility";
+
+// Font Awesome is a vector-based (using web fonts) icon library that ships
+// with enough icons for almost any scenario. It's integration with SCSS
+// is less than optimal, leading to abiguous "import" declarations.
+@import "variables";
+@import "mixins";
+@import "path";
+@import "core";
+@import "icons";
+
+// Layouts are responsible for the majority of the structure of the website,
+// including such things as responsive adapation of headers, columns, etc.
+// Layouts are not styles for individual components, that's for modules.
+@import "layouts/header";
+
+// Modules are the reusable "building blocks" of the website. They are
+// intended to be flexible enough to sit anywhere in the layout, so
+// it's important to thing "agnostic" when developing these.
+@import "modules/call-to-action";
+@import "modules/logo";
+
+// Shame is a great place for browser hacks and things you don't want the
+// world to know all about. Use sparingly, only putting the bits and
+// pieces here you can find no other clean way to solve.
+@import "shame";

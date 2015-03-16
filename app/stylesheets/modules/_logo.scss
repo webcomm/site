@@ -1,0 +1,23 @@
+$logo-width: rem-calc(180) !default;
+$logo-height-ratio: 0.27 !default;
+
+@mixin logo-size($width) {
+  width: $width;
+  padding-bottom: $width * $logo-height-ratio;
+}
+
+// Our logo needs an inline-block display (it is an anchor a)
+.logo {
+  @include logo-size($logo-width);
+  position: relative;
+  display: inline-block;
+  fill: $primary-color;
+
+  svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
