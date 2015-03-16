@@ -69,7 +69,7 @@ gulp.task('javascripts', function () {
 
 gulp.task('pages', function () {
   gulp
-    .src('app/index.html')
+    .src('app/index.php')
     .pipe(gulp.dest('public'))
     .pipe(browserSync.reload({
       stream: true
@@ -102,7 +102,7 @@ gulp.task('clean', function () {
   del.sync([
     'public/fonts',
     'public/images',
-    'public/index.html',
+    'public/index.php',
     'public/javascripts',
     'public/stylesheets',
   ]);
@@ -111,9 +111,8 @@ gulp.task('clean', function () {
 // Serve task (for BrowserSync)
 gulp.task('serve', function () {
   browserSync({
-    server: {
-      baseDir: './public'
-    }
+    proxy: 'webcomm.dev',
+    port: 2015
   });
 });
 
@@ -126,7 +125,7 @@ gulp.task('default', ['clean'], function () {
 gulp.task('watch', ['serve'], function () {
 
   // Trigger compilation on asset changes
-  gulp.watch('app/index.html', ['pages']);
+  gulp.watch('app/index.php', ['pages']);
   gulp.watch('app/images/*', ['images']);
   gulp.watch('app/javascripts/*', ['javascripts']);
   gulp.watch('app/stylesheets/**/*', ['stylesheets']);

@@ -10,7 +10,11 @@
     <link href="stylesheets/app.css" rel="stylesheet">
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <header role="banner">
+      <a href="#">
+        <?=file_get_contents(__DIR__.'/images/logo.svg')?>
+      </a>
+    </header>
 
     <!-- JavaScripts -->
     <script src="javascripts/app.js"></script>
