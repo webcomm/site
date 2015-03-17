@@ -14,9 +14,11 @@ require('dotenv').load();
 
 // Override default configuration with that of our app's dotenv file
 var config = _.extend({
-  environment: 'local'
+  environment: 'local',
+  url: 'http://webcomm.dev'
 }, {
-  environment: process.env.APP_ENV
+  environment: process.env.APP_ENV,
+  url: process.env.APP_URL
 });
 
 // Function to determine if we are in production mode or not
@@ -82,13 +84,16 @@ gulp.task('stylesheets', function () {
   gulp
     .src('app/stylesheets/app.scss')
     .pipe($.sass({
-      outputStyle: isProduction() ? 'compressed' : 'nested',
       sourceComments: !isProduction(),
       includePaths: [
         'bower_components/font-awesome/scss',
         'bower_components/foundation/scss'
       ]
     }))
+    .pipe($.if(isProduction(), $.uncss({
+      html: [config.url]
+    })))
+    .pipe($.if(isProduction(), $.minifyCss()))
     .on('error', $.notify.onError())
     .pipe($.autoprefixer('last 2 versions'))
     .pipe(browserSync.reload({
@@ -112,7 +117,7 @@ gulp.task('clean', function () {
 // Serve task (for BrowserSync)
 gulp.task('serve', function () {
   browserSync({
-    proxy: 'webcomm.dev',
+    proxy: config.url,
     port: 2015
   });
 });
