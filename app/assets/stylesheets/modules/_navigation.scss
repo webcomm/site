@@ -1,0 +1,139 @@
+// @todo, refactor this code for responsive styles, including better variable names
+
+// Here we declare the overlay colour for the navigation (when
+// it's presented as a full screen modal on mobile devices).
+$navigation-overlay-color: $oil !default;
+
+// Properties that dictate styles of the navigation menu itself
+$navigation-item-margin-bottom: $paragraph-margin-bottom !default;
+$navigation-font-size: $h4-font-size - $h4-font-reduction !default;
+$navigation-link-color: $white !default;
+
+// Styles for the navigation trigger
+$navigation-trigger-width: rem-calc(30) !default;
+$navigation-trigger-height: $navigation-trigger-width * 0.7 !default;
+$navigation-trigger-hamburger-color: $primary-color !default;
+$navigation-trigger-hamburger-component-height: rem-calc(2) !default;
+$navigation-opened-hamburger-color: $navigation-link-color !default;
+
+// The main navigation overlays the website (but is only visible when triggered
+// open), where the unordered list is front and centre. Nice transitions are
+// added when the navigation is opened and closed too, so perrrrrty.
+nav[role="navigation"] {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  visibility: hidden;
+  opacity: 0;
+  background-color: $navigation-overlay-color;
+  transition: all 250ms ease-in-out;
+
+  // Make sure the undordered list is sitting front and centre (literally)
+  ul {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    list-style: none;
+  }
+
+  // Offset each list item so they may be animated to be
+  // lined up when the main navigation menu is opened.
+  li {
+    transition: all 375ms ease-in-out 250ms;
+    opacity: 0;
+    margin-bottom: $navigation-item-margin-bottom;
+    font-size: $navigation-font-size;
+    text-align: center;
+
+    &:nth-child(odd) {
+      transform: translateX(30%);
+    }
+
+    &:nth-child(even) {
+      transform: translateX(-30%);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  a {
+    color: $navigation-link-color;
+  }
+}
+
+// Trigger element
+.navigation-trigger {
+  position: absolute;
+  position: absolute;
+  top: rem-calc(36);
+  right: rem-calc(36);
+  z-index: 2; // Ensure it sits over the active navigation
+  width: $navigation-trigger-width;
+  height: $navigation-trigger-height;
+
+  // See http://www.zeldman.com/2012/03/01/replacing-the-9999px-hack-new-image-replacement/
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+
+  // The hamburger is made of three components, the top bun,
+  // pattie and bottom bun. We'll setup common
+  // styles for those three things now.
+  span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: $navigation-trigger-hamburger-component-height;
+    background-color: $navigation-trigger-hamburger-color;
+    transition: 250ms all ease-in-out;
+  }
+
+  // Top bun is at the top of the trigger
+  .top-bun {
+    top: 0;
+  }
+
+  // Pattie is in the middle of the trigger
+  .pattie {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  // Bottom bun is at the bottom of the trigger
+  .bottom-bun {
+    bottom: 0;
+  }
+}
+
+.navigation-opened {
+
+  // When the navigation is opened, alter properties on the navigation
+  // menu and associated list items. Animations are declared so these
+  // property changes occur in a aesthetically pleasing way.
+  nav[role="navigation"] {
+    visibility: visible;
+    opacity: 1;
+
+    li {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  // Ensure the navigation trigger has a fixed position when the navigation
+  // is opened so that a scrolling effect doesn't occur. Fine touches?
+  .navigation-trigger {
+    position: fixed;
+
+    span {
+      background-color: $navigation-opened-hamburger-color;
+    }
+  }
+}

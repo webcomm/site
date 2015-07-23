@@ -4,6 +4,8 @@
 var browserSync = require('browser-sync');
 var del         = require('del');
 var gulp        = require('gulp');
+var RevAll      = require('gulp-rev-all');
+var runSequence = require('run-sequence');
 var _           = require('underscore');
 
 // Gulp plugin to make loading further plugins trivial
@@ -28,9 +30,9 @@ function isProduction() {
 
 // Fonts
 gulp.task('fonts', function () {
-  gulp
+  return gulp
     .src('bower_components/font-awesome/fonts/*.{eot,svg,ttf,woff}')
-    .pipe(gulp.dest('public/fonts'))
+    .pipe(gulp.dest('public/assets/fonts'))
     .pipe(browserSync.reload({
       stream: true,
       once: true
@@ -39,30 +41,48 @@ gulp.task('fonts', function () {
 
 // Images
 gulp.task('images', function () {
-  gulp
-    .src('app/images/*')
+  return gulp
+    .src('app/assets/images/*')
     .pipe($.if(isProduction(), $.imagemin({
       optimizationLevel: 3,
       progressive: true,
       interlaced: true
     })))
-    .pipe(gulp.dest('public/images'))
+    .pipe(gulp.dest('public/assets/images'))
     .pipe(browserSync.reload({
       stream: true,
       once: true
     }));
 });
 
+// Manifest
+gulp.task('manifest', function () {
+  if (isProduction()) {
+    var revAll = new RevAll();
+
+    return gulp
+      .src([
+        'public/assets/javascripts/app.js',
+        'public/assets/stylesheets/app.css'
+      ])
+      .pipe(revAll.revision())
+      .pipe(gulp.dest('public/assets'))
+      .pipe(revAll.manifestFile())
+      .pipe(gulp.dest('public/assets'));
+  }
+});
+
 // JavaScripts
 gulp.task('javascripts', function () {
-  gulp
+  return gulp
     .src([
       'bower_components/zepto/zepto.js',
-      'app/javascripts/app.js'
+      'bower_components/fastclick/lib/fastclick.js',
+      'app/assets/javascripts/app.js'
     ])
     .pipe($.concat('app.js'))
     .pipe($.if(isProduction(), $.uglify()))
-    .pipe(gulp.dest('public/javascripts'))
+    .pipe(gulp.dest('public/assets/javascripts'))
     .pipe(browserSync.reload({
       stream: true
     }))
@@ -70,7 +90,7 @@ gulp.task('javascripts', function () {
 });
 
 gulp.task('pages', function () {
-  gulp
+  return gulp
     .src('app/index.php')
     .pipe(gulp.dest('public'))
     .pipe(browserSync.reload({
@@ -81,8 +101,8 @@ gulp.task('pages', function () {
 
 // Stylesheets
 gulp.task('stylesheets', function () {
-  gulp
-    .src('app/stylesheets/app.scss')
+  return gulp
+    .src('app/assets/stylesheets/app.scss')
     .pipe($.sass({
       sourceComments: !isProduction(),
       includePaths: [
@@ -90,33 +110,34 @@ gulp.task('stylesheets', function () {
         'bower_components/foundation/scss'
       ]
     }))
+    .on('error', $.notify.onError())
     .pipe($.if(isProduction(), $.uncss({
       html: [config.url]
     })))
     .pipe($.if(isProduction(), $.minifyCss()))
-    .on('error', $.notify.onError())
     .pipe($.autoprefixer('last 2 versions'))
     .pipe(browserSync.reload({
       stream: true
     }))
-    .pipe(gulp.dest('public/stylesheets'))
+    .pipe(gulp.dest('public/assets/stylesheets'))
     .pipe($.notify('Compiled Stylesheets.'));
 });
 
 // Clean
 gulp.task('clean', function () {
   del.sync([
-    'public/fonts',
-    'public/images',
-    'public/index.php',
-    'public/javascripts',
-    'public/stylesheets',
+    'public/assets/fonts',
+    'public/assets/images',
+    'public/assets/javascripts',
+    'public/assets/rev-manifest.json',
+    'public/assets/stylesheets',
+    'public/index.php'
   ]);
 });
 
 // Serve task (for BrowserSync)
 gulp.task('serve', function () {
-  browserSync({
+  return browserSync({
     proxy: config.url,
     port: 2015
   });
@@ -124,6 +145,11 @@ gulp.task('serve', function () {
 
 // Default task
 gulp.task('default', ['clean'], function () {
+  runSequence(
+    ['fonts', 'images', 'javascripts', 'stylesheets'],
+    'manifest',
+    'pages'
+  );
   gulp.start('fonts', 'images', 'javascripts', 'pages', 'stylesheets');
 });
 
@@ -132,7 +158,7 @@ gulp.task('watch', ['serve'], function () {
 
   // Trigger compilation on asset changes
   gulp.watch('app/index.php', ['pages']);
-  gulp.watch('app/images/*', ['images']);
-  gulp.watch('app/javascripts/*', ['javascripts']);
-  gulp.watch('app/stylesheets/**/*', ['stylesheets']);
+  gulp.watch('app/assets/images/*', ['images']);
+  gulp.watch('app/assets/javascripts/*', ['javascripts']);
+  gulp.watch('app/assets/stylesheets/**/*', ['stylesheets']);
 });

@@ -1,3 +1,48 @@
+<?php
+
+/**
+ * Cached manifest contents.
+ *
+ * @var array
+ */
+$manifest = null;
+
+/**
+ * Get the contents of the manifest file as an array.
+ *
+ * @return array
+ */
+function get_manifest()
+{
+    global $manifest;
+
+    if ($manifest === null) {
+        if (file_exists($file = __DIR__.'/assets/rev-manifest.json')) {
+            $manifest = json_decode(file_get_contents($file), true);
+        } else {
+            $manifest = [];
+        }
+    }
+
+    return $manifest;
+}
+
+/**
+ * Get an asset with the given filename.
+ *
+ * @param  string  $file
+ * @return string
+ */
+function asset($file)
+{
+    if (isset(get_manifest()[$file])) {
+        $file = get_manifest()[$file];
+    }
+
+    return "assets/{$file}";
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,7 +52,7 @@
     <title>Webcomm</title>
 
     <!-- Stylesheets -->
-    <link href="stylesheets/app.css" rel="stylesheet">
+    <link href="<?=asset('stylesheets/app.css')?>" rel="stylesheet">
 
   </head>
   <body>
@@ -15,11 +60,11 @@
 
       <!-- Logo -->
       <a href="#" class="logo">
-        <?=file_get_contents(__DIR__.'/images/logo.svg')?>
+        <?=file_get_contents(asset('images/logo.svg'))?>
       </a>
 
       <!-- Main navigation -->
-      <nav role="navigation">
+      <nav role="navigation" id="js-main-navigation">
         <ul>
           <li><a href="#">Home</a></li>
           <li><a href="#">What We Do</a></li>
@@ -28,6 +73,14 @@
           <li><a href="#">Contact Us</a></li>
         </ul>
       </nav>
+
+      <!-- Navigation trigger -->
+      <a href="#" class="navigation-trigger" id="js-navigation-trigger">
+        <span class="top-bun"></span>
+        <span class="pattie"></span>
+        <span class="bottom-bun"></span>
+        Toggle Navigation
+      </a>
 
       <!-- Call to action navigation -->
       <nav class="call-to-action">
@@ -40,8 +93,10 @@
 
     </header>
 
+    <img src="<?=asset('images/wooden-desk-with-gadgets.jpg')?>" alt="Wooden Desk With Gadgets">
+
     <!-- JavaScripts -->
-    <script src="javascripts/app.js"></script>
+    <script src="<?=asset('javascripts/app.js')?>"></script>
 
   </body>
 </html>

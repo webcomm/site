@@ -1,0 +1,29 @@
+// The call to action navigation is a mobile-only navigation menu which shows
+// convenient links for users on the go, such as calling, finding on
+// a map and getting in touch with Webcomm.
+.call-to-action {
+
+  // We display the unordered list within our call to action navigation
+  // as a table, so we may evenly space links horizontally within it.
+  ul {
+    margin: 0;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    list-style: none;
+  }
+
+  // By setting each list item to display as a table cell, with 2% width,
+  // we are able to achieve cross-browser compatible even sizing.
+  li {
+    display: table-cell;
+    width: 2%;
+  }
+
+  // Display links in the call to action as full-width buttons, so they fill
+  // out the whole space for the list item that they're contained.
+  a {
+    @include button($padding: $button-med, $full-width: true);
+    margin-bottom: 0;
+  }
+}

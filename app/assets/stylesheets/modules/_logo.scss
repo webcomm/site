@@ -1,0 +1,31 @@
+// We use this to declare the width of the logo on the website
+$logo-width: rem-calc(180) !default;
+
+// Because the logo is an anchor tag wrapping an inline SVG element, we use
+// absolute positioning to resize the logo within the constraints of it's
+// containing anchor. Not sure of a cleaner way to achieve this.
+$logo-height-ratio: 0.27 !default;
+
+// We use this to declare the logo colour
+$Logo-colour: $primary-color !default;
+
+// We use this to resize the logo in accordance to the height ratio
+@mixin logo-size($width) {
+  width: $width;
+  padding-bottom: $width * $logo-height-ratio;
+}
+
+.logo {
+  @include logo-size($logo-width);
+  position: relative;
+  display: inline-block;
+  fill: $Logo-colour;
+
+  svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
